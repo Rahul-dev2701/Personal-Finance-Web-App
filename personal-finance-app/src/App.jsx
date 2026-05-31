@@ -11,7 +11,6 @@ function App() {
       <div className='flex, bg-slate-800'>
         <Sidebar />
       </div>
-      <h2 className='text-3xl font-bold underline'>Jai shree Ganesha !!</h2>
     </>
   )
 }
