@@ -12,8 +12,8 @@ function App() {
         <Sidebar />
         <Searchbar />
       </div>
-      <main className="ml-70 mt-16 min-h-screen bg-[#101111] p-6 text-white">
-      <Outlet/>
+      <main className="ml-70 mt-16 min-h-screen bg-[#0a0e14] p-6 text-white">
+        <Outlet/>
       </main>
     </>
   )
