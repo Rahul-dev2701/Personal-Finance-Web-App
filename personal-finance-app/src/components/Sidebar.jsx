@@ -1,4 +1,5 @@
 import React from "react";
+import {Link, NavLink} from 'react-router-dom'
 import {
   LayoutGrid,
   BadgeDollarSign,
@@ -7,39 +8,8 @@ import {
   HandCoins,
   BarChart3,
   Settings,
+  Icon,
 } from "lucide-react";
-
-const menuItems = [
-  {
-    name: "Overview",
-    icon: LayoutGrid,
-    active: true,
-  },
-  {
-    name: "Transactions",
-    icon: BadgeDollarSign,
-  },
-  {
-    name: "Income",
-    icon: TrendingUp,
-  },
-  {
-    name: "Expenses",
-    icon: TrendingDown,
-  },
-  {
-    name: "Borrow/Lend",
-    icon: HandCoins,
-  },
-  {
-    name: "Analytics",
-    icon: BarChart3,
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-  },
-];
 
 const Sidebar = () => {
   return (
@@ -53,32 +23,55 @@ const Sidebar = () => {
         </div>
 
         <nav className="px-4 py-6 flex flex-col gap-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <button
-                key={item.name}
-                className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 text-left
-                  ${
-                    item.active
-                      ? "bg-[#151D22] text-[#01D5AB]"
-                      : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"
-                  }
-                `}
-              >
-                <Icon
-                  size={18}
-                  strokeWidth={1.8}
-                  className="shrink-0"
-                />
-
-                <span className="text-[15px] font-medium tracking-[0.2px]">
-                  {item.name}
-                </span>
-              </button>
-            );
-          })}
+          <NavLink 
+            to="/"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <LayoutGrid size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Overview</span>
+          </NavLink>
+          <NavLink 
+            to="transactions"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <BadgeDollarSign size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Transactions</span>
+          </NavLink>
+          <NavLink 
+            to="income"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <TrendingUp size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Income</span>
+          </NavLink>
+          <NavLink 
+            to="expenses"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <TrendingDown size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Expenses</span>
+          </NavLink>
+          <NavLink 
+            to="loans"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <HandCoins size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Loans</span>
+          </NavLink>
+          <NavLink 
+            to="analytics"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <BarChart3 size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Analytics</span>
+          </NavLink>
+          <NavLink 
+            to="settings"
+            className={({isActive}) => `w-full flex items-center gap-4 px-4 py-3 rounded-xl ${isActive ? "bg-[#151D22] text-[#01D5AB]" : "text-[#A3AAB5] hover:bg-[#151D22] hover:text-white"} transition-all duration-200 text-left`} 
+          >
+            <Settings size={18} strokeWidth={1.8} className="shrink-0" />
+            <span className="text-[15px] font-medium tracking-[0.2px]">Settings</span>
+          </NavLink>
         </nav>
       </div>
 
