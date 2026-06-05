@@ -3,7 +3,7 @@ import { Search, Bell } from "lucide-react";
 
 function Searchbar(){
     return(
-    <div className="fixed top-0 left-70 right-0 flex items-center justify-between h-16 bg-[#141920] border-b border-white/10 px-6">
+    <div className="fixed top-0 left-70 right-0 z-1 flex items-center justify-between h-16 bg-[#141920] border-b border-white/10 px-6">
         <div className="relative">
             <Search
                 size={20}

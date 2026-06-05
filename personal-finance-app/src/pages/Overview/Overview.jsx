@@ -136,8 +136,8 @@ function Overview(){
                             <span className="text-sm ">{item.category}</span>
                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
                         </div>
-                        <div className="text-xl font-bold text-foreground mb-1">₹{item.amount.toLocaleString()}</div>
-                        <div className="text-xs text-muted-foreground">{item.percentage}% of total</div>
+                        <div className="text-xl font-bold mb-1">₹{item.amount.toLocaleString()}</div>
+                        <div className="text-xs">{item.percentage}% of total</div>
                     </div>
                 ))}
                 </div>
