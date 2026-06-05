@@ -21,7 +21,7 @@ function Income(){
                     className="bg-[#00d4aa] text-[#0a0e14] px-6 py-3 rounded-lg font-medium hover:bg-[#00d4aa]/90 transition-colors flex items-center gap-2"
                     >
                     <Plus className="w-5 h-5" />
-                    Add Expense
+                    Add Income
                 </button>
                 
             </div>

@@ -51,7 +51,7 @@ const menuItems = [
 
 const Sidebar = () => {
   return (
-    <aside className="fixed top-0 w-70 h-screen bg-[#0F1519] border-r border-white/10 flex flex-col justify-between">
+    <aside className="fixed top-0 w-70 min-h-screen bg-[#0F1519] border-r border-white/10 flex flex-col justify-between">
       <div>
         <div className="px-6 py-6 border-b border-white/10">
           <h1 className="text-[#01D5AB] text-[20px] font-bold tracking-wide">
