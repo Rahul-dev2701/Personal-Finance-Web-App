@@ -1,15 +1,6 @@
 import React from "react";
 import { formatCurrency } from "../../utils/functions";
 
-const incomeEntries = [
-    { id: 1, amount: 25000, date: '2026-05-10', source: 'Salary', remarks: 'Monthly salary deposit' },
-    { id: 2, amount: 8500, date: '2026-05-03', source: 'Freelance', remarks: 'Website development project' },
-    { id: 3, amount: 3200, date: '2026-04-28', source: 'Investment', remarks: 'Dividend payment from stocks' },
-    { id: 4, amount: 1500, date: '2026-04-25', source: 'Side Business', remarks: 'Product sales' },
-    { id: 5, amount: 4200, date: '2026-04-20', source: 'Freelance', remarks: 'Logo design work' },
-  ];
-
-
 function IncomeCard({ title, value, icon, iconBg, iconCol,footer }) {
     const Icon = icon
   return (
