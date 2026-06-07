@@ -1,7 +1,7 @@
 import React from "react";
 import { formatCurrency } from "../../utils/functions";
 
-function IncomeCard({ title, value, icon, iconBg, iconCol,footer }) {
+function IncomeCard({ title,color="", value, icon, iconBg, iconCol="",footer }) {
     const Icon = icon
   return (
     <div className={ `h-30 rounded-2xl bg-[#141920] border shadow-2xl border-white/10 px-6`}>
@@ -12,7 +12,7 @@ function IncomeCard({ title, value, icon, iconBg, iconCol,footer }) {
                 <Icon size={20} className={iconCol}/>
             </div>
         </div>
-        <div className="mt-3 font-bold text-2xl">
+        <div  style={{ color }} className="mt-3 font-bold text-2xl">
             {formatCurrency(value)}
         </div>
         {footer && (
