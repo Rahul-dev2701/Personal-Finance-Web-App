@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import {Plus, DollarSign, Search} from "lucide-react"
 import {IncomeCard} from "../../components/inc_card";
 import { Link } from "react-router-dom";
+import LoanCard from "../../components/loan_card";
 
 const borrowData = [
     {
@@ -108,7 +109,8 @@ const footer = netBalance >= 0 ? "You are owed" : "You owe";
 
 function Loans(){
 
-    const displayArray = useState(lentData)
+    const [displayArray,setDisplayArray] = useState(lentData)
+    const [activeTab,setActiveTab] = useState("lent")
 
     return(
         <div className="p-8">
@@ -152,7 +154,60 @@ function Loans(){
             </div>
 
             {/* bottom section */}
-            
+            <div className="bg-[#141920] border border-[#ffffff14] rounded-xl p-6 mt-6">
+                <div className="flex flex-col border-b border-[#ffffff14] justify-evenly md:flex-row">
+                    <button onClick={()=>{
+                        setDisplayArray(lentData)
+                        setActiveTab("lent")
+                    }}
+                      className={`pb-3 px-10 text-sm font-medium transition-colors ${
+                        activeTab === "lent"
+                            ? 'text-[#00d4aa] border-b-2 border-[#00d4aa]'
+                            : 'text-gray-400'
+                    }`} >Lent
+                    </button>
+
+                    <button onClick={()=>{
+                        setDisplayArray(borrowData)
+                        setActiveTab("borrow")
+                    }}
+                        className={`pb-3 px-10 text-sm font-medium transition-colors ${
+                        activeTab==="borrow"
+                            ? 'text-[#00d4aa]  border-b-2 border-[#00d4aa]'
+                            : 'text-gray-400'
+                    }`} >Borrowed
+                    </button>
+                </div>
+                
+                <div>
+                    {
+                        displayArray.map((entryObject)=>{
+                            return(
+                                <LoanCard 
+                                    key={entryObject.key}
+                                    type={entryObject.type}
+                                    person={entryObject.person}
+                                    amount={entryObject.amount}
+                                    date ={entryObject.date}
+                                    interestRate={entryObject.interestRate}
+                                    term={entryObject.term}
+                                    emiAmount={entryObject.emiAmount}
+                                    paidEmis={entryObject.paidEmis}
+                                    totalEmis={entryObject.totalEmis}
+                                    description={entryObject.description}
+                                    status={entryObject.status}
+                                    color = {activeTab==="lent" ? "#00D9B5" : "#e41515d5"}
+                                    bgColor = {activeTab==="lent" ? "#00D4AA1A" : "#2D1F27"}
+                                />
+                            )
+                            
+                        })
+                    }
+                </div>
+                
+
+            </div>
+
 
         </div>
 
