@@ -1,7 +1,8 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
-import {User, Lock} from "lucide-react"
+import {User, Lock, Bell, Download, LogOut, Trash2} from "lucide-react"
+import SlidingKnob from "../../components/settings_card";
 
 const userName = "User"
 const userMail = "usermail@example.com"
@@ -18,7 +19,7 @@ function Settings(){
                 <p className="text-[#8b92a0] mt-1">Manage your account and preferences</p>
             </div>
 
-            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-2/3 border shadow-2xl border-white/10`}>
+            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-7/10 border shadow-2xl border-white/10`}>
                 <div className="flex gap-4 mt-4">
                     <div  className={`w-10 h-10 rounded-xl flex items-center justify-center bg-[#00D4AA1A] `} >
                         <User size={20} className="text-[#00D9B5]"/>
@@ -52,7 +53,7 @@ function Settings(){
             </div>
 
             {/* mid section */}
-            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-2/3 border shadow-2xl border-white/10`}>
+            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-7/10 border shadow-2xl border-white/10`}>
                 <div className="flex gap-4 mt-4">
                     <div  className={`w-10 h-10 rounded-xl flex items-center justify-center bg-[#00D4AA1A] `} >
                         <Lock size={20} className="text-[#00D9B5]"/>
@@ -81,6 +82,104 @@ function Settings(){
                             Change Password
                         </button>
                     </div>
+                </div>
+                
+            </div>
+
+            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-7/10 border shadow-2xl border-white/10`}>
+                <div className="flex gap-4 mt-4">
+                    <div  className={`w-10 h-10 rounded-xl flex items-center justify-center bg-[#00D4AA1A] `} >
+                        <Bell size={20} className="text-[#00D9B5]"/>
+                        
+                    </div>
+                    <div className="flex items-center">
+                        <p className="text-xl font-semibold text-foreground">Notifications</p>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-4 mt-4">
+                    <div className="flex justify-between gap-2 mt-2 p-2 border-b border-white/10">
+                        <div>
+                            <p className="font-semi-bold text-0.5xl">Due Payment Reminders</p>
+                            <p className="text-xs text-gray-400 text-muted-foreground">Get notified about upcoming EMI payments</p>
+                        </div>
+                        <SlidingKnob/>
+                        
+                    </div>
+                    <div className="flex justify-between gap-2 mt-2  p-2 border-b border-white/10">
+                        <div>
+                            <p className="font-semi-bold text-0.5xl">Transaction Alerts</p>
+                            <p className="text-xs text-gray-400 text-muted-foreground">Get notified for every transaction</p>
+                        </div>
+                        <SlidingKnob/>
+                        
+                    </div>
+                    <div className="flex justify-between gap-2 p-2 mt-2 border-b border-white/10">
+                        <div>
+                            <p className="font-semi-bold text-0.5xl">Monthly Reports</p>
+                            <p className="text-xs text-gray-400 text-muted-foreground">Receive monthly financial summary</p>
+                        </div>
+                        <SlidingKnob/>
+                        
+                    </div>
+                </div>
+                
+            </div>
+
+            {/* bottom section */}
+            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-7/10 border shadow-2xl border-white/10`}>
+                <div className="flex gap-4 mt-4">
+                    <div  className={`w-10 h-10 rounded-xl flex items-center justify-center bg-[#00D4AA1A] `} >
+                        <Download size={20} className="text-[#00D9B5]"/>
+                        
+                    </div>
+                    <div className="flex items-center">
+                        <p className="text-xl font-semibold text-foreground">Data Management</p>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-4 mt-4 ">
+                    <button>
+                        <div className="flex justify-between gap-2 border bg-[#161c24] border-white/10 rounded-xl p-3 hover:brightness-120 cursor-pointer">
+                        <div className="font-semi-bold text-l" >Export all data</div>
+                            <Download size={20} className="text-gray-400 cursor-pointer"/>
+                    
+                        </div>
+                    </button>
+                    
+                    <button>
+                        <div className="flex justify-between gap-2 border bg-[#161c24] border-white/10 rounded-xl p-3 hover:brightness-120 cursor-pointer">
+                            <div className="font-semi-bold text-l" >Download Monthly Report</div>
+                            <Download size={20} className="text-gray-400 cursor-pointer"/>
+                            </div>
+                    </button>
+                </div>
+                
+            </div>
+            <div className={`rounded-2xl mt-6 p-6 bg-[#141920] w-7/10 border shadow-2xl border-white/10`}>
+                <div className="flex gap-4 mt-4">
+                    <div  className={`w-10 h-10 rounded-xl flex items-center justify-center bg-[#2D1F27] `} >
+                        <Trash2 size={20} className="text-[#e41515d5]"/>
+                        
+                    </div>
+                    <div className="flex items-center">
+                        <p className="text-xl font-semibold text-foreground">Danger Zone</p>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-4 mt-4 ">
+                        <div className="flex justify-between items-center gap-2 border bg-[#161c24] border-white/10 rounded-xl p-3 hover:brightness-120">
+                            <div>
+                                <p className="font-semi-bold text-0.5xl">Due Payment Reminders</p>
+                                <p className="text-xs text-gray-400 text-muted-foreground">Get notified about upcoming EMI payments</p>
+                            </div>
+                            <button className="cursor-pointer"> <LogOut size={20}/></button>
+                        </div>
+                    
+                        <div className="flex justify-between items-center gap-2 border  bg-[#2D1F27] border-red-400 rounded-xl p-3 hover:brightness-120 text-[#e41515d5]">
+                            <div>
+                                <p className="font-semi-bold text-0.5xl">Due Payment Reminders</p>
+                                <p className="text-xs  text-muted-foreground">Get notified about upcoming EMI payments</p>
+                            </div>
+                            <button className="cursor-pointer"><Trash2 size={20} className="text-[#e41515d5]"/></button>
+                        </div>
                 </div>
                 
             </div>
