@@ -8,7 +8,6 @@ import Transactions from './pages/Transactions/Transactions.jsx';
 import Income from './pages/Income/Income.jsx';
 import Expenses from './pages/Expenses/Expenses.jsx';
 import Loans from './pages/Loans/Loans.jsx';
-import Analytics from './pages/Analytics/Analytics.jsx';
 import Settings from './pages/Settings/Settings.jsx';
 
 const router = createBrowserRouter([
@@ -35,10 +34,6 @@ const router = createBrowserRouter([
       {
         path: "loans",
         element: <Loans />,
-      },
-      {
-        path: "analytics",
-        element: <Analytics />,
       },
       {
         path: "settings",

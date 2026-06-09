@@ -7,7 +7,6 @@ import {
   TrendingUp,
   TrendingDown,
   HandCoins,
-  BarChart3,
   Settings,
 } from "lucide-react";
 
@@ -36,11 +35,6 @@ const menuItems = [
     to: "loans",
     icon: HandCoins,
     label: "Loans",
-  },
-  {
-    to: "analytics",
-    icon: BarChart3,
-    label: "Analytics",
   },
   {
     to: "settings",

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Search, Calendar, DollarSign, FileText, CreditCard } from 'lucide-react';
-
+import { Link } from "react-router-dom";
 
 function Expenses(){
 
@@ -94,26 +94,34 @@ function Expenses(){
                         className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
                         />
                     </div>
-                    <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
-                    >
-                        <option value="all">All Categories</option>
-                        {expenseCategories.map((cat) => (
-                        <option key={cat} value={cat}>
-                            {cat}
-                        </option>
-                        ))}
-                    </select>
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
-                    >
-                        <option value="date">Sort by Date</option>
-                        <option value="amount">Sort by Amount</option>
-                    </select>
+                    <div className='flex gap-3'>
+                        <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
+                        >
+                            <option value="all">All Categories</option>
+                            {expenseCategories.map((cat) => (
+                            <option key={cat} value={cat}>
+                                {cat}
+                            </option>
+                            ))}
+                        </select>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
+                        >
+                            <option value="date">Sort by Date</option>
+                            <option value="amount">Sort by Amount</option>
+                        </select>
+
+                        <div className="flex content-center">
+                            <Link to="/transactions" className="text-sm text-[#e8ecf0] hover:underline mt-4">View All</Link>
+                        </div>
+                    </div>
+                    
+                    
                 </div>
 
                 <div className="overflow-x-auto">

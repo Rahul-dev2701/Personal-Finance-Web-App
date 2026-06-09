@@ -100,6 +100,8 @@ function Transactions(){
               <option value="expense">Expenses Only</option>
             </select>
             <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
               className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
             >
               <option value="date">Sort by Date</option>
