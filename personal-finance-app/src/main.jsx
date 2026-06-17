@@ -9,8 +9,25 @@ import Income from './pages/Income/Income.jsx';
 import Expenses from './pages/Expenses/Expenses.jsx';
 import Loans from './pages/Loans/Loans.jsx';
 import Settings from './pages/Settings/Settings.jsx';
+import Signup from './pages/Signup/Signup.jsx';
+import Login from './pages/Login/Login.jsx';
+import ForgotPassword from './pages/ForgotPass/ForgotPassword.jsx';
 
 const router = createBrowserRouter([
+
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+
   {
     path: "/",
     element: <App />,
