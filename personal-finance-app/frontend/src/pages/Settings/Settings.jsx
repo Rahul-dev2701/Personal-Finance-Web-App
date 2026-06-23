@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
-import {User, Lock, Bell, Download, LogOut, Trash2} from "lucide-react"
+import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 
 const userName = "User"
@@ -10,7 +10,12 @@ const userMobile = "8005556677"
 const currPassword = "Idontknow"
 const newPassword = "Iwillneverknow"
 
+
+
 function Settings(){
+
+    const [profilePhoto, setProfilePhoto] = useState(null);
+
     return(
         <div className="p-6">
             {/* top section */}
@@ -29,6 +34,44 @@ function Settings(){
                         <p className="text-xl font-semibold text-foreground">Profile Information</p>
                     </div>
                 </div>
+
+                <div className="flex flex-col gap-4 mt-6">
+                    {/*Profile photo*/}
+                    <div className="border border-white/10 rounded-xl bg-[#161c24] p-5">
+                        <div className="flex items-center gap-6">
+                            <div className="relative">
+                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-[#ffffff0d] flex items-center justify-center">
+                                    {profilePhoto? (<img
+                                        src={URL.createObjectURL(profilePhoto)}
+                                        alt="Profile Photo"
+                                        className="w-full h-full object-cover"
+                                    />): (
+                                        <User size={40} className="text-gray-400"/>
+                                    )}
+                                </div>
+                                <label htmlFor="profilePhoto" className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#00d4aa] flex items-center justify-center cursor-pointer hover:brightness-110">
+                                    <Camera size={16} className="text-[#0a0e14]"/>
+                                </label>
+                            </div>
+
+                            <div>
+                                <h3 className="font-medium text-[#e8ecf0]">
+                                    Profile Photo
+                                </h3>
+                                <p className="text-sm text-[#8b92a0] mt-1">
+                                    Upload a JPG, PNG or WebP image
+                                </p>
+
+                                <label htmlFor="profilePhoto" className="inline-block mt-3 px-4 py-2 rounded-lg bg-[#00d4aa] text-[#0a0e14] font-medium cursor-pointer hover:bg-[#00d4aa]/90 transition-colors">
+                                    Choose Photo
+                                </label>
+
+                                {/* <input id="profilePhoto" type="file" accept="image/*" className="hidden" onChange={(e)=> setProfilePhoto(e.target.files[0])} /> */}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="flex flex-col gap-4 mt-4">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name">Full Name</label>
