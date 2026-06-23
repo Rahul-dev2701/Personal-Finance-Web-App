@@ -22,10 +22,9 @@ const transactionSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        transactionDate: {
+        transactionTime: {
             type: Date,
             required: true,
-            isUnique: true,
         },
         userId: {
             type: mongoose.Schema.Types.ObjectId,

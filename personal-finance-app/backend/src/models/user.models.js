@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
         },
         profilePicture: {
             type: String,
-            required: true,
+            default: "https://res.cloudinary.com/dhdrljlsi/image/upload/v1782215305/WhatsApp_Image_2026-06-23_at_16.38.40_ta89wp.jpg"
         },
         currency: {
             type: String,
