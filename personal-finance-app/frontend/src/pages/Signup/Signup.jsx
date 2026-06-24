@@ -16,7 +16,7 @@ const [fullName,setFullName] = useState("")
 const [email,setEmail] = useState("")
 const [password,setPassword] = useState("")
 const [confirmPassword,setConfirmPassword] = useState("")
-const [profilePicture,setProfilePicture] = useState(null)
+const [profilePicture,setProfilePicture] = useState()
 
 
 
