@@ -2,26 +2,41 @@ import { useState, useEffect } from "react";
 import { formatCurrency } from "../../../utils/functions";
 import Stat_card from "../../components/Stat_card";
 import { Search, Filter, Download, TrendingUp, TrendingDown } from 'lucide-react';
+import { getTransactions } from "../../api/transactions.api.js";
 
 function Transactions(){
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('date');
+  const [allTransactions, setAllTransactions] = useState([]);
 
-  const allTransactions = [
-    { id: 1, type: 'income', name: 'Salary Deposit', category: 'Salary', amount: 25000, date: '2026-05-10' },
-    { id: 2, type: 'expense', name: 'Grocery Shopping', category: 'Food', amount: -850, date: '2026-05-12' },
-    { id: 3, type: 'expense', name: 'Electricity Bill', category: 'Electricity', amount: -420, date: '2026-05-08' },
-    { id: 4, type: 'income', name: 'Freelance Project', category: 'Freelance', amount: 8500, date: '2026-05-03' },
-    { id: 5, type: 'expense', name: 'Netflix Subscription', category: 'OTT', amount: -199, date: '2026-05-05' },
-    { id: 6, type: 'expense', name: 'Train Tickets', category: 'Travel', amount: -1200, date: '2026-05-10' },
-    { id: 7, type: 'income', name: 'Investment Dividend', category: 'Investment', amount: 3200, date: '2026-04-28' },
-    { id: 8, type: 'expense', name: 'Petrol', category: 'Fuel', amount: -2500, date: '2026-05-07' },
-    { id: 9, type: 'expense', name: 'Monthly Rent', category: 'Rent', amount: -20000, date: '2026-05-01' },
-    { id: 10, type: 'income', name: 'Side Business', category: 'Business', amount: 1500, date: '2026-04-25' },
-    { id: 11, type: 'expense', name: 'Restaurant Bill', category: 'Food', amount: -1200, date: '2026-04-24'},
-  ];
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await getTransactions();
+        setAllTransactions(response); 
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchTransactions();
+  }, []); 
+  // const allTransactions = [
+  //   { id: 1, type: 'income', name: 'Salary Deposit', category: 'Salary', amount: 25000, date: '2026-05-10' },
+  //   { id: 2, type: 'expense', name: 'Grocery Shopping', category: 'Food', amount: -850, date: '2026-05-12' },
+  //   { id: 3, type: 'expense', name: 'Electricity Bill', category: 'Electricity', amount: -420, date: '2026-05-08' },
+  //   { id: 4, type: 'income', name: 'Freelance Project', category: 'Freelance', amount: 8500, date: '2026-05-03' },
+  //   { id: 5, type: 'expense', name: 'Netflix Subscription', category: 'OTT', amount: -199, date: '2026-05-05' },
+  //   { id: 6, type: 'expense', name: 'Train Tickets', category: 'Travel', amount: -1200, date: '2026-05-10' },
+  //   { id: 7, type: 'income', name: 'Investment Dividend', category: 'Investment', amount: 3200, date: '2026-04-28' },
+  //   { id: 8, type: 'expense', name: 'Petrol', category: 'Fuel', amount: -2500, date: '2026-05-07' },
+  //   { id: 9, type: 'expense', name: 'Monthly Rent', category: 'Rent', amount: -20000, date: '2026-05-01' },
+  //   { id: 10, type: 'income', name: 'Side Business', category: 'Business', amount: 1500, date: '2026-04-25' },
+  //   { id: 11, type: 'expense', name: 'Restaurant Bill', category: 'Food', amount: -1200, date: '2026-04-24'},
+  // ];
+  // const allTransactions = await getTransactions(); // Fetch transactions from the backend API
 
   const filteredTransactions = allTransactions
     .filter((txn) => {

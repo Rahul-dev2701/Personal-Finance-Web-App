@@ -20,7 +20,7 @@ const transactionSchema = new mongoose.Schema(
         },
         paymentMethod: {
             type: String,
-            required: true,
+            default: "Net Banking",
         },
         transactionTime: {
             type: Date,
