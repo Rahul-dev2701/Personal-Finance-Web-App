@@ -9,14 +9,16 @@ const AuthContextProvider = ({children})=>{
 
     useEffect(()=>{
         const fetchCurrentUser = async () => {
-            try{
+            try {
                 const res = await api.get("/user/current-user");
-                setUser(res.data.data)
+                setUser(res.data.data);
+            } catch (err) {
+                console.log(err?.message);
+                setUser(null);
+            } finally {
                 setLoading(false);
-            }catch(err){
-                console.log(err?.message)
             }
-        }
+        };
         fetchCurrentUser();
     },[])
 

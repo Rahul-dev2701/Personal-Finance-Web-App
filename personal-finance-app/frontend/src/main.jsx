@@ -31,35 +31,40 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/",
     element: <ProtectedRoutes />,
-    element: <App />,
-    children: [
+    children:[
       {
-        path: "",
-        element: <Overview />,
-      },
-      {
-        path: "transactions",
-        element: <Transactions />,
-      },
-      {
-        path: "income",
-        element: <Income />,
-      },
-      {
-        path: "expenses",
-        element: <Expenses />,
-      },
-      {
-        path: "loans",
-        element: <Loans />,
-      },
-      {
-        path: "settings",
-        element: <Settings />,
-      },
-    ],
+        path: "/",
+        element: <App />,
+        children: [
+          {
+            path: "",
+            element: <Overview />,
+          },
+          {
+            path: "transactions",
+            element: <Transactions />,
+          },
+          {
+            path: "income",
+            element: <Income />,
+          },
+          {
+            path: "expenses",
+            element: <Expenses />,
+          },
+          {
+            path: "loans",
+            element: <Loans />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+        ],
+      }
+    ]
+    
   },
 ]);
 createRoot(document.getElementById('root')).render(

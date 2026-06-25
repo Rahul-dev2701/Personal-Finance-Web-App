@@ -8,6 +8,10 @@ const loginUser = (data)=>{
     return api.post("/user/login",data)
 }
 
-export {registerUser, loginUser}
+const logoutUser = (data) =>{
+    return api.post("/user/logout",data)
+}
+
+export {registerUser, loginUser, logoutUser}
 
 

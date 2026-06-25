@@ -5,12 +5,14 @@ import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 import { useContext } from "react";
 import authContext from "../../context/authContext.js";
+import { logoutUser } from "../../api/auth.api.js";
+import { useNavigate } from "react-router-dom";
 
 
 
 function Settings(){
 
-    const { user, loading } = useContext(authContext);
+    const { user, loading, setUser } = useContext(authContext);
     if(loading){
         return <div>Loading...</div>
     }
@@ -21,6 +23,20 @@ function Settings(){
     const userMobile = user.mobile || "8005556677"
     const profilePhoto = user.profilePicture || null
 
+    const navigate = useNavigate();
+
+    const logout = async ()=>{
+        try {
+        const res = await logoutUser()
+        if (res.data.success) {
+
+            setUser(null)
+            navigate("/login");
+        }
+        } catch (error) {
+            console.log(error?.message)
+        }
+    }
 
     return(
         <div className="p-6">
@@ -219,7 +235,7 @@ function Settings(){
                                 <p className="font-semi-bold text-0.5xl">Log Out</p>
                                 <p className="text-xs text-gray-400 text-muted-foreground">Sign out of your account</p>
                             </div>
-                            <button className="cursor-pointer"> <LogOut size={20}/></button>
+                            <button onClick={logout} className="cursor-pointer"> <LogOut size={20}/></button>
                         </div>
                     
                         <div className="flex justify-between items-center gap-2 border  bg-[#2D1F27] border-red-400 rounded-xl p-3 hover:brightness-120 text-[#e41515d5]">
