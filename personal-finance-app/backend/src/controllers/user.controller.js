@@ -25,11 +25,11 @@ const generateAccessAndRefreshTokens =  async (userId) =>{
 const registerUser = asyncHandler(async(req,res)=>{
     const formdata = req.body;
 
-    const { username, fullName, email, password, profilePicture} = formdata;
+    const { username, fullName, mobile, email, password, profilePicture} = formdata;
 
-    if(!username || !fullName || !email || !password) throw new ApiError(400, "All fields are required");
+    if(!username || !fullName ||!mobile || !email || !password) throw new ApiError(400, "All fields are required");
 
-    if ([username, fullName, email, password].some(
+    if ([username, fullName,mobile, email, password].some(
             field => !field?.trim()
         )
     ) {
@@ -39,9 +39,14 @@ const registerUser = asyncHandler(async(req,res)=>{
     const lowercaseUsername = username.toLowerCase();
     const lowercaseEmail = email.toLowerCase();
 
+    // mobile validation
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+        throw new ApiError(400, "Please enter a valid 10-digit mobile number");
+    }
+
     //check if user alresdy exists
     const existingUser = await User.findOne({
-        $or:[{ email: lowercaseEmail }, {username: lowercaseEmail}]
+        $or:[{ email: lowercaseEmail }, {username: lowercaseEmail},{mobile}]
     })
     
 
@@ -53,6 +58,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         username: lowercaseUsername,
         fullName,
         email: lowercaseEmail,
+        mobile,
         password,
         profilePicture,
     }) 

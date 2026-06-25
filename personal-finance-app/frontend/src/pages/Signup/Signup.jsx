@@ -14,6 +14,7 @@ export default function Signup() {
 const [username,setUsername] = useState("")
 const [fullName,setFullName] = useState("")
 const [email,setEmail] = useState("")
+const [mobile,setMobile] = useState("")
 const [password,setPassword] = useState("")
 const [confirmPassword,setConfirmPassword] = useState("")
 const [profilePicture,setProfilePicture] = useState()
@@ -39,6 +40,7 @@ const [profilePicture,setProfilePicture] = useState()
       username,
       fullName,
       email,
+      mobile,
       password,
       profilePicture
     })
@@ -81,6 +83,14 @@ const [profilePicture,setProfilePicture] = useState()
           label="Email Address"
           type="email"
           placeholder="john@example.com"
+        />
+
+        <AuthInput
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          label="Contact Info"
+          type="text"
+          placeholder="8005557767"
         />
 
         <AuthInput

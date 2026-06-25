@@ -1,5 +1,8 @@
 import React from "react";
 import SidebarItem from "./SidebarItem";
+import authContext from "../context/authContext.js";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   LayoutGrid,
@@ -44,6 +47,13 @@ const menuItems = [
 ];
 
 const Sidebar = () => {
+  const { user, loading, setUser } = useContext(authContext);
+    if(loading){
+        return <div>Loading...</div>
+    }
+  const userName = user.username || "User Name"
+  const userMail = user.email || "useremail@example.com"
+  const navigate = useNavigate()
   return (
     <aside className="fixed top-0 w-70 min-h-screen bg-[#0F1519] border-r border-white/10 flex flex-col justify-between">
       <div>
@@ -65,23 +75,25 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="border-t border-white/10 px-6 py-5">
+      <button className="cursor-pointer" onClick={()=>{navigate("/settings")}}>
+        <div className="border-t border-white/10 px-6 py-5">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-[#01D5AB] flex items-center justify-center text-[#0F1519] font-semibold text-sm">
-            MG
+            <img className="rounded-full" src={user.profilePicture} alt="" />
           </div>
 
           <div>
             <h3 className="text-white text-[15px] font-medium leading-none">
-              Manasvi Gehlot
+              {user.fullName}
             </h3>
 
             <p className="text-[#7C8794] text-[13px] mt-1">
-              manasvi@iitj.ac.in
+              {user.email}
             </p>
           </div>
         </div>
-      </div>
+        </div>
+      </button>
     </aside>
   );
 };
