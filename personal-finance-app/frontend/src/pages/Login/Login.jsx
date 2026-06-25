@@ -4,24 +4,51 @@ import AuthInput from "../../components/authInput.jsx";
 import AuthDivider from "../../components/authDivider.jsx";
 import AuthLayout from "../../components/authLayout.jsx";
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../api/auth.api.js";
+
+
+
 export default function Login() {
+  const [password,setPassword] = useState("")
+  const [email,setEmail] = useState("")
+  const navigate = useNavigate();
+  
+  const login = async(e) =>{
+    e.preventDefault();
+    try {
+      const res = await loginUser({email,password})
+      if (res.data.success) {
+        navigate("/");
+      }
+    } catch (error) {
+        console.log(error?.message)
+    }
+}
+
+
   return (
     <AuthLayout
       title="FINEconix"
       subtitle="Welcome back. Sign in to manage your finances."
       cardTitle="Login"
     >
-      <form className="space-y-5">
+      <form onSubmit={login}  className="space-y-5">
         <AuthInput
           label="Email Address"
           type="email"
           placeholder="john@example.com"
+          value={email}
+          onChange={(e)=>setEmail(e.target.value)}
         />
 
         <AuthInput
           label="Password"
           type="password"
           placeholder="••••••••"
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
         />
 
         <div className="flex justify-between items-center">

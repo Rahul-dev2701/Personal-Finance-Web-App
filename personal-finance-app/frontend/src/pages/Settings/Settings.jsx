@@ -3,18 +3,24 @@ import React from "react";
 import { useState, useEffect } from "react";
 import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
-
-const userName = "User"
-const userMail = "usermail@example.com"
-const userMobile = "8005556677"
-const currPassword = "Idontknow"
-const newPassword = "Iwillneverknow"
+import { useContext } from "react";
+import authContext from "../../context/authContext.js";
 
 
 
 function Settings(){
 
-    const [profilePhoto, setProfilePhoto] = useState(null);
+    const { user, loading } = useContext(authContext);
+    if(loading){
+        return <div>Loading...</div>
+    }
+    console.log(loading)
+    console.log("User in settings:", user);
+    const userName = user.username || "User Name"
+    const userMail = user.email || "useremail@example.com"
+    const userMobile = user.mobile || "8005556677"
+    const profilePhoto = user.profilePicture || null
+
 
     return(
         <div className="p-6">
@@ -42,7 +48,7 @@ function Settings(){
                             <div className="relative">
                                 <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-[#ffffff0d] flex items-center justify-center">
                                     {profilePhoto? (<img
-                                        src={URL.createObjectURL(profilePhoto)}
+                                        src={profilePhoto}
                                         alt="Profile Photo"
                                         className="w-full h-full object-cover"
                                     />): (
@@ -210,16 +216,16 @@ function Settings(){
                 <div className="flex flex-col gap-4 mt-4 ">
                         <div className="flex justify-between items-center gap-2 border bg-[#161c24] border-white/10 rounded-xl p-3 hover:brightness-120">
                             <div>
-                                <p className="font-semi-bold text-0.5xl">Due Payment Reminders</p>
-                                <p className="text-xs text-gray-400 text-muted-foreground">Get notified about upcoming EMI payments</p>
+                                <p className="font-semi-bold text-0.5xl">Log Out</p>
+                                <p className="text-xs text-gray-400 text-muted-foreground">Sign out of your account</p>
                             </div>
                             <button className="cursor-pointer"> <LogOut size={20}/></button>
                         </div>
                     
                         <div className="flex justify-between items-center gap-2 border  bg-[#2D1F27] border-red-400 rounded-xl p-3 hover:brightness-120 text-[#e41515d5]">
                             <div>
-                                <p className="font-semi-bold text-0.5xl">Due Payment Reminders</p>
-                                <p className="text-xs  text-muted-foreground">Get notified about upcoming EMI payments</p>
+                                <p className="font-semi-bold text-0.5xl">Delete Account</p>
+                                <p className="text-xs  text-muted-foreground">Permanently delete your account and all associated data</p>
                             </div>
                             <button className="cursor-pointer"><Trash2 size={20} className="text-[#e41515d5]"/></button>
                         </div>

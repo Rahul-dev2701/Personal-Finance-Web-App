@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        mobile: {
+            type: String,
+            unique: true,
+        },
         password: {
             type: String,
             required: true,
@@ -33,6 +37,10 @@ const userSchema = new mongoose.Schema(
             default:"INR" 
         },
         isEmailVerified: {
+            type: Boolean,
+            default: false,
+        },
+        isMobileVerified: {
             type: Boolean,
             default: false,
         },

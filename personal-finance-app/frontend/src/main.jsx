@@ -12,6 +12,8 @@ import Settings from './pages/Settings/Settings.jsx';
 import Signup from './pages/Signup/Signup.jsx';
 import Login from './pages/Login/Login.jsx';
 import ForgotPassword from './pages/ForgotPass/ForgotPassword.jsx';
+import AuthContextProvider from './context/authContextProvider.jsx';
+import ProtectedRoutes from './components/protectedRoutes.jsx';
 
 const router = createBrowserRouter([
 
@@ -30,6 +32,7 @@ const router = createBrowserRouter([
 
   {
     path: "/",
+    element: <ProtectedRoutes />,
     element: <App />,
     children: [
       {
@@ -60,7 +63,7 @@ const router = createBrowserRouter([
   },
 ]);
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <AuthContextProvider>
     <RouterProvider router={router} />,
-  </StrictMode>,
+  </AuthContextProvider>,
 )
