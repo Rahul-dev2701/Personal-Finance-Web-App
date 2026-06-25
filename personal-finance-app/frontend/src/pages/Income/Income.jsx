@@ -159,7 +159,7 @@ function Income() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-[#8b92a0] mb-2">Source</label>
+                                <label className="block text-sm font-medium text-[#8b92a0] mb-2">Category</label>
                                 <select className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
                                     <option style={{ backgroundColor: "#1b232d" }}>Salary</option>
                                     <option style={{ backgroundColor: "#1b232d" }}>Freelance</option>

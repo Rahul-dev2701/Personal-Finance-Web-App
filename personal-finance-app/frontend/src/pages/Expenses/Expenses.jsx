@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 function Expenses(){
 
+    const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
@@ -52,6 +53,7 @@ function Expenses(){
                     <p className="text-[#8b92a0] mt-1">Track all your expenses and spending</p>
                 </div>
                 <button
+                    onClick={() => setShowAddModal(true)}
                     className="bg-[#00d4aa] text-[#0a0e14] px-6 py-3 rounded-lg font-medium hover:bg-[#00d4aa]/90 transition-colors flex items-center gap-2"
                     >
                     <Plus className="w-5 h-5" />
@@ -161,6 +163,96 @@ function Expenses(){
                     </table>
                 </div>
             </div>
+
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-[#141920] border border-[#ffffff14] rounded-xl p-6 w-full max-w-md">
+                    <h2 className="text-xl font-bold text-[#e8ecf0] mb-4">Add Expense Entry</h2>
+                    <form className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Amount</label>
+                        <div className="relative">
+                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
+                        <input
+                            type="number"
+                            placeholder="Enter amount"
+                            className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
+                            required
+                        />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Date</label>
+                        <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
+                        <input
+                            type="date"
+                            className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
+                            required
+                        />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-[#8b92a0] mb-2">Category</label>
+                        <select className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
+                        {expenseCategories.map((cat) => (
+                            <option style={{ backgroundColor: "#1b232d" }} key={cat}>{cat}</option>
+                        ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Payment Method</label>
+                        <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
+                        <select className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
+                            {paymentMethods.map((method) => (
+                            <option style={{ backgroundColor: "#1b232d" }} key={method}>{method}</option>
+                            ))}
+                        </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Remarks</label>
+                        <div className="relative">
+                        <FileText className="absolute left-3 top-3 w-5 h-5 text-[#8b92a0]" />
+                        <textarea
+                            placeholder="Add notes about this expense..."
+                            rows={3}
+                            className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0] resize-none"
+                        ></textarea>
+                        </div>
+                    </div>
+
+                    <div className="bg-[#1a1f28]/50 border border-[#ffffff14] rounded-lg p-4">
+                        <p className="text-sm text-[#8b92a0] mb-2">Important Note:</p>
+                        <p className="text-xs text-[#8b92a0]">
+                        Once submitted, expense entries cannot be edited or deleted. Please ensure all details are correct before submitting.
+                        </p>
+                    </div>
+
+                    <div className="flex gap-3">
+                        <button
+                        type="button"
+                        onClick={() => setShowAddModal(false)}
+                        className="flex-1 px-4 py-2 border border-[#ffffff14] rounded-lg hover:bg-[#1a1f28] transition-colors text-[#e8ecf0]"
+                        >
+                        Cancel
+                        </button>
+                        <button
+                        type="submit"
+                        className="flex-1 px-4 py-2 bg-[#00d4aa] text-[#0a0e14] rounded-lg hover:bg-[#00d4aa]/90 transition-colors"
+                        >
+                        Submit Entry
+                        </button>
+                    </div>
+                    </form>
+                </div>
+                </div>
+            )}
 
         </div>
 
