@@ -77,6 +77,22 @@ function Income() {
                 amount: newEntry.amount,
                 transactionTime: newEntry.date,
             });
+
+            setIncomeEntries((prev) => [
+                {
+                    id: response.data.data._id,
+                    amount: newEntry.amount,
+                    date: newEntry.date,
+                    source: newEntry.source,
+                    remarks: newEntry.remarks,
+                },
+                ...prev,
+            ]);
+
+            e.target.reset();
+
+            setShowAddModal(false);
+
         } catch (error) {
             console.error("Error adding income entry:", error);
         }
@@ -256,13 +272,13 @@ function Income() {
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 px-4 py-2 border border-[#ffffff14] rounded-lg hover:bg-[#ffffff0d] transition-colors text-[#e8ecf0]"
+                                    className="flex-1 cursor-pointer px-4 py-2 border border-[#ffffff14] rounded-lg hover:bg-[#ffffff0d] transition-colors text-[#e8ecf0]"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-[#00d4aa] text-[#0a0e14] font-medium rounded-lg hover:bg-[#00d4aa]/90 transition-colors"
+                                    className="flex-1 cursor-pointer px-4 py-2 bg-[#00d4aa] text-[#0a0e14] font-medium rounded-lg hover:bg-[#00d4aa]/90 transition-colors"
                                 >
                                     Submit Entry
                                 </button>

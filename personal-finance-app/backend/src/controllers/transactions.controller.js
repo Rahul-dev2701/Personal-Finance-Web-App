@@ -5,14 +5,14 @@ import {Transaction} from '../models/transactions.models.js';
 import {User} from '../models/user.models.js';
 
 const createTransaction = asyncHandler (async (req, res) => {
-    const { amount, type, category, transactionTime, description } = req.body;
+    const { amount, type, category, transactionTime, description, paymentMethod } = req.body;
     const userId = req.user._id;
 
-    if (!amount || !type || !category || !transactionTime || !description) {
+    if (!amount || !type || !category || !transactionTime || !description || !paymentMethod) {
         throw new ApiError(400, 'All fields are required');
     }
     
-    if ([amount, type, category, transactionTime, description].some(
+    if ([amount, type, category, transactionTime, description, paymentMethod].some(
                 field => typeof field === 'string' ? field.trim() === "" : !field
             )
         ) {
@@ -25,7 +25,8 @@ const createTransaction = asyncHandler (async (req, res) => {
         category,
         transactionTime,
         description,
-        userId
+        userId,
+        paymentMethod
     });
 
     if(!newTransaction){

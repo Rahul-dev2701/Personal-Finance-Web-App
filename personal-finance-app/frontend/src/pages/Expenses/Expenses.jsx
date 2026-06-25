@@ -14,15 +14,7 @@ function Expenses(){
 
     const expenseCategories = ['Food', 'Rent', 'Electricity', 'Phone Bill', 'OTT Subscription', 'Travel', 'Fuel', 'Shopping', 'Healthcare', 'Other'];
     const paymentMethods = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Banking'];
-    
-    // const expenseEntries = [
-    // { id: 1, amount: 800, date: '2026-05-12', category: 'Food', paymentMethod: 'UPI', remarks: 'Grocery shopping at supermarket' },
-    // { id: 2, amount: 20000, date: '2026-05-01', category: 'Rent', paymentMethod: 'Net Banking', remarks: 'Monthly rent payment' },
-    // { id: 3, amount: 420, date: '2026-05-08', category: 'Electricity', paymentMethod: 'UPI', remarks: 'Electricity bill for April' },
-    // { id: 4, amount: 199, date: '2026-05-05', category: 'OTT Subscription', paymentMethod: 'Credit Card', remarks: 'Netflix monthly subscription' },
-    // { id: 5, amount: 1200, date: '2026-05-10', category: 'Travel', paymentMethod: 'Debit Card', remarks: 'Train tickets to Mumbai' },
-    // { id: 6, amount: 2500, date: '2026-05-07', category: 'Fuel', paymentMethod: 'Cash', remarks: 'Petrol for car' },
-    // ];
+
     useEffect(() => {
         const fetchExpenseTransactions = async () => {
             try {
@@ -69,6 +61,9 @@ function Expenses(){
                 paymentMethod: newEntry.paymentMethod,
                 transactionTime: newEntry.date,
             });
+
+            setExpenseEntries((prevEntries) => [...prevEntries, { ...newEntry, id: response?.data?.data?._id }]);
+            setShowAddModal(false);
         } catch (error) {
             console.error("Error adding expense entry:", error);
         }
