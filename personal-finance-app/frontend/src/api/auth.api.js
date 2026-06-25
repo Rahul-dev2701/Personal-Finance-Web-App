@@ -12,6 +12,16 @@ const logoutUser = (data) =>{
     return api.post("/user/logout",data)
 }
 
-export {registerUser, loginUser, logoutUser}
+const updateProfilePicture = (data) =>{
+    return api.post("/user/updatepfp",data)
+}
+
+const deleteProfilePicture = (data) =>{
+    return api.post("/user/dltpfp",data)
+}
+
+
+
+export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture}
 
 

@@ -5,10 +5,12 @@ import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 import { useContext } from "react";
 import authContext from "../../context/authContext.js";
-import { logoutUser } from "../../api/auth.api.js";
+import { deleteProfilePicture, logoutUser, updateProfilePicture } from "../../api/auth.api.js";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-
+const DEFAULT_PFP =
+    "https://res.cloudinary.com/dhdrljlsi/image/upload/v1782215305/WhatsApp_Image_2026-06-23_at_16.38.40_ta89wp.jpg"
 
 function Settings(){
 
@@ -16,12 +18,50 @@ function Settings(){
     if(loading){
         return <div>Loading...</div>
     }
-    console.log(loading)
-    console.log("User in settings:", user);
     const userName = user.username || "User Name"
     const userMail = user.email || "useremail@example.com"
     const userMobile = user.mobile || "8005556677"
-    const profilePhoto = user.profilePicture || null
+    const [profilePhoto, setProfilePhoto] = useState(user.profilePicture || null)
+
+    const [isUploading, setIsUploading] = useState(false);
+
+
+    const handlePhotoChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            alert("No file chosen");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("profilePicture", file);
+        setIsUploading(true)
+       try {
+         const res = await updateProfilePicture(formData);
+         
+         if (res.data.success) {
+            setProfilePhoto(res.data.data);
+         }
+       } catch (error) {
+            console.log(error?.message)
+       }finally{
+            setIsUploading(false);
+       }
+};
+    const dltProfilePic = async () => {
+        setIsUploading(true)
+       try {
+         const res = await deleteProfilePicture();
+         
+         if (res.data.success) {
+            setProfilePhoto(res.data.data);
+         }
+       } catch (error) {
+            console.log(error?.message)
+       }finally{
+            setIsUploading(false);
+       }
+};
 
     const navigate = useNavigate();
 
@@ -62,15 +102,25 @@ function Settings(){
                     <div className="border border-white/10 rounded-xl bg-[#161c24] p-5">
                         <div className="flex items-center gap-6">
                             <div className="relative">
-                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-[#ffffff0d] flex items-center justify-center">
-                                    {profilePhoto? (<img
-                                        src={profilePhoto}
-                                        alt="Profile Photo"
-                                        className="w-full h-full object-cover"
-                                    />): (
-                                        <User size={40} className="text-gray-400"/>
+                                <div className="relative w-24 h-24" >
+                                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-[#ffffff0d] flex items-center justify-center">
+                                        {profilePhoto? (<img
+                                            src={profilePhoto}
+                                            alt="Profile Photo"
+                                            className="w-full h-full object-cover"
+                                        />): (
+                                            <User size={40} className="text-gray-400"/>
+                                        )}
+                                    </div>
+                                    {/* spinner */}
+                                    {isUploading && (
+                                        <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+                                            <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        </div>
                                     )}
+
                                 </div>
+                                
                                 <label htmlFor="profilePhoto" className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#00d4aa] flex items-center justify-center cursor-pointer hover:brightness-110">
                                     <Camera size={16} className="text-[#0a0e14]"/>
                                 </label>
@@ -83,12 +133,25 @@ function Settings(){
                                 <p className="text-sm text-[#8b92a0] mt-1">
                                     Upload a JPG, PNG or WebP image
                                 </p>
-
-                                <label htmlFor="profilePhoto" className="inline-block mt-3 px-4 py-2 rounded-lg bg-[#00d4aa] text-[#0a0e14] font-medium cursor-pointer hover:bg-[#00d4aa]/90 transition-colors">
+                                
+                                <div className="flex gap-4">
+                                    <label htmlFor="profilePhoto" className="inline-block mt-3 px-4 py-2 rounded-lg bg-[#00d4aa] text-[#0a0e14] font-medium cursor-pointer hover:bg-[#00d4aa]/90 transition-colors">
                                     Choose Photo
-                                </label>
+                                    </label>
 
-                                {/* <input id="profilePhoto" type="file" accept="image/*" className="hidden" onChange={(e)=> setProfilePhoto(e.target.files[0])} /> */}
+                                   
+                                        {profilePhoto !== DEFAULT_PFP && (
+                                             <label className="inline-block mt-3 px-4 py-2 rounded-lg bg-[#00d4aa] text-[#0a0e14] font-medium cursor-pointer hover:bg-[#00d4aa]/90 transition-colors">
+                                                <button onClick={dltProfilePic} className="cursor-pointer">Delete Profile Photo</button>
+                                             </label>
+
+                                        )}
+                                   
+                                    
+
+                                </div>
+                                
+                                <input id="profilePhoto" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
                             </div>
                         </div>
                     </div>

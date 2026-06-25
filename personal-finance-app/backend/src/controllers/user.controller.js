@@ -3,6 +3,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js"; 
 import cookieParser from "cookie-parser"
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {v2 as cloudinary} from "cloudinary"
+
+
 
 const generateAccessAndRefreshTokens =  async (userId) =>{
     try {
@@ -142,5 +146,71 @@ const getCurrentUser = asyncHandler(async(req,res)=>{
     )
 })
 
-export {registerUser, loginUser, logoutUser, getCurrentUser}
+const changeProfilePhoto = asyncHandler(async(req,res)=>{
+    // check if image exist
+    if (!req.file) {
+        throw new ApiError(400, "Profile photo is required");
+    }
+
+    //upload on cloudinary
+    const uploadedImage = await uploadOnCloudinary(req.file.path)
+
+    if(!uploadedImage) throw new ApiError(500,"Error in uploading file to cloud")
+
+    //set url in db
+    await User.findByIdAndUpdate(req.user._id,
+        {
+            $set:{
+                profilePicture: uploadedImage.secure_url,
+                profilePicturePublicId: uploadedImage.public_id
+            }
+           
+        },
+        {
+            returnDocument: "after"
+        }
+    )
+    
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            uploadedImage.secure_url,
+            "Image uploaded successfully"
+        )
+    )
+    
+})
+
+
+const dltProfilePhoto = asyncHandler(async(req,res)=>{
+    const user = await User.findById(req.user._id);
+    if (user.profilePicturePublicId) {
+        await cloudinary.uploader.destroy(user.profilePicturePublicId);
+    }
+    const defaultpfp = "https://res.cloudinary.com/dhdrljlsi/image/upload/v1782215305/WhatsApp_Image_2026-06-23_at_16.38.40_ta89wp.jpg"
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                profilePicture: defaultpfp,
+                profilePicturePublicId: null
+            }
+        }
+    )
+    
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            defaultpfp,
+            "Profile photo deleted successfully"
+        )
+    )
+    
+})
+
+export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto}
 

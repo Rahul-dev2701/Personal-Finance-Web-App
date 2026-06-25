@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "https://res.cloudinary.com/dhdrljlsi/image/upload/v1782215305/WhatsApp_Image_2026-06-23_at_16.38.40_ta89wp.jpg"
         },
+        profilePicturePublicId: {
+            type: String,
+            default: null
+        },
         currency: {
             type: String,
             default:"INR" 
