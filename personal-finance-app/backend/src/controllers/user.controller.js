@@ -5,7 +5,7 @@ import { User } from "../models/user.models.js";
 import cookieParser from "cookie-parser"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {v2 as cloudinary} from "cloudinary"
-
+import jwt from "jsonwebtoken"
 
 
 const generateAccessAndRefreshTokens =  async (userId) =>{
@@ -212,5 +212,40 @@ const dltProfilePhoto = asyncHandler(async(req,res)=>{
     
 })
 
-export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto}
+const refreshAccessToken = asyncHandler(async(req,res)=>{
+    const receivedToken = req.cookies?.refreshToken || req.body.refreshToken //replace the bearer keyword with emty string to get auth token if access to cookies not available
+    
+    if(!receivedToken) throw new ApiError(401,"unauthorized request")
+
+    const decodedToken = await jwt.verify(receivedToken, process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await User.findById(decodedToken?._id)
+
+    if(!user) throw new ApiError(401,"refresh token invalid")
+
+    if(receivedToken!==user?.refreshToken) throw new ApiError(401,"refresh token expired")
+    
+    const {accessToken,newRefreshToken} = await generateAccessAndRefreshTokens(user._id)
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return  res
+    .status(200)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",newRefreshToken,options)
+    .json(
+        new ApiResponse(
+            200,
+            { accessToken, refreshToken: newRefreshToken},
+            "Access token refreshed successfully"
+        )
+    )
+    
+    
+})
+
+export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken}
 

@@ -20,8 +20,12 @@ const deleteProfilePicture = (data) =>{
     return api.post("/user/dltpfp",data)
 }
 
+const refAccessToken = () =>{
+    return api.post("/user/get-new-token")
+}
 
 
-export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture}
+
+export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken}
 
 
