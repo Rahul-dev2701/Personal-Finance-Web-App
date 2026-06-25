@@ -1,25 +1,86 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Plus, DollarSign, Search, Calendar, FileText } from "lucide-react"; 
 import { IncomeCard } from "../../components/inc_card";
 import { Link } from "react-router-dom";
+import { createTransaction } from "../../api/transactions.api.js";
+import { getTransactions } from "../../api/transactions.api.js";
 
-const incomeEntries = [
-    { id: 1, amount: 25000, date: '2026-05-10', source: 'Salary', remarks: 'Monthly salary deposit' },
-    { id: 2, amount: 8500, date: '2026-05-03', source: 'Freelance', remarks: 'Website development project' },
-    { id: 3, amount: 3200, date: '2026-04-28', source: 'Investment', remarks: 'Dividend payment from stocks' },
-    { id: 4, amount: 1500, date: '2026-04-25', source: 'Side Business', remarks: 'Product sales' },
-    { id: 5, amount: 4200, date: '2026-04-20', source: 'Freelance', remarks: 'Logo design work' },
-];
+// const incomeEntries = [
+//     { id: 1, amount: 25000, date: '2026-05-10', source: 'Salary', remarks: 'Monthly salary deposit' },
+//     { id: 2, amount: 8500, date: '2026-05-03', source: 'Freelance', remarks: 'Website development project' },
+//     { id: 3, amount: 3200, date: '2026-04-28', source: 'Investment', remarks: 'Dividend payment from stocks' },
+//     { id: 4, amount: 1500, date: '2026-04-25', source: 'Side Business', remarks: 'Product sales' },
+//     { id: 5, amount: 4200, date: '2026-04-20', source: 'Freelance', remarks: 'Logo design work' },
+// ];
 
-const incomeCurrentMonth = incomeEntries.reduce((sum, entry) => sum + entry.amount, 0);
-const noOfEntries = incomeEntries.length;
 
 function Income() {
     const [searchTerm, setSearchTerm] = useState('');
     const [sourceFilter, setSourceFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
     const [showAddModal, setShowAddModal] = useState(false);
+    const [incomeEntries, setIncomeEntries] = useState([]);
+
+    // setIncomeEntries(Transactions.allTransactions.filter((txn) => txn.type === 'income').map((txn) => ({
+    //     id: txn._id,
+    //     amount: txn.amount,
+    //     date: txn.transactionTime,
+    //     source: txn.category,
+    //     remarks: txn.description
+    // })));
+
+    useEffect(() => {
+        const fetchIncomeTransactions = async () => {
+            try {
+                const response = await getTransactions();
+                const transactionsArray = response?.data?.data || [];
+
+                const filteredIncome = transactionsArray
+                    .filter((txn) => txn?.type === 'income')
+                    .map((txn) => ({
+                        id: txn._id,
+                        amount: txn.amount,
+                        date: txn.transactionTime,
+                        source: txn.category,
+                        remarks: txn.description
+                    }));
+
+                setIncomeEntries(filteredIncome);
+            } catch (error) {
+                console.error("Error fetching transactions in Income page:", error);
+                setIncomeEntries([]);
+            }
+        };
+        fetchIncomeTransactions();
+    }, []);
+    
+    const incomeCurrentMonth = incomeEntries.reduce((sum, entry) => sum + entry.amount, 0);
+    const noOfEntries = incomeEntries.length;
+
+    const addIncomeEntry = async (e) => {
+        e.preventDefault(); 
+        
+        const formData = new FormData(e.target);
+        const newEntry = {
+            amount: Number(formData.get("amount")),
+            date: formData.get("date"),
+            source: formData.get("category"),
+            remarks: formData.get("remarks"),
+        };
+
+        try {
+            const response = await createTransaction({
+                type: 'income',
+                description: newEntry.remarks,
+                category: newEntry.source,
+                amount: newEntry.amount,
+                transactionTime: newEntry.date,
+            });
+        } catch (error) {
+            console.error("Error adding income entry:", error);
+        }
+    };
 
     const filteredEntries = incomeEntries
         .filter((entry) => {
@@ -132,12 +193,13 @@ function Income() {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
                     <div className="bg-[#141920] border border-[#ffffff14] rounded-xl p-6 w-full max-w-md">
                         <h2 className="text-xl font-bold text-[#e8ecf0] mb-4">Add Income Entry</h2>
-                        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                        <form className="space-y-4" onSubmit={addIncomeEntry}>
                             <div>
                                 <label className="block text-sm font-medium text-[#8b92a0] mb-2">Amount</label>
                                 <div className="relative">
                                     <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
                                     <input
+                                        name="amount"
                                         type="number"
                                         placeholder="Enter amount"
                                         className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
@@ -151,6 +213,7 @@ function Income() {
                                 <div className="relative">
                                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
                                     <input
+                                        name="date"
                                         type="date"
                                         className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
                                         required
@@ -160,7 +223,7 @@ function Income() {
 
                             <div>
                                 <label className="block text-sm font-medium text-[#8b92a0] mb-2">Category</label>
-                                <select className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
+                                <select name="category" className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
                                     <option style={{ backgroundColor: "#1b232d" }}>Salary</option>
                                     <option style={{ backgroundColor: "#1b232d" }}>Freelance</option>
                                     <option style={{ backgroundColor: "#1b232d" }}>Investment</option>
@@ -174,6 +237,7 @@ function Income() {
                                 <div className="relative">
                                     <FileText className="absolute left-3 top-3 w-5 h-5 text-[#8b92a0]" />
                                     <textarea
+                                        name="remarks"
                                         placeholder="Add notes about this income..."
                                         rows={3}
                                         className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0] resize-none"

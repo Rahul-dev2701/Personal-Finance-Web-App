@@ -13,7 +13,7 @@ const createTransaction = asyncHandler (async (req, res) => {
     }
     
     if ([amount, type, category, transactionTime, description].some(
-                field => !field?.trim()
+                field => typeof field === 'string' ? field.trim() === "" : !field
             )
         ) {
             throw new ApiError(400, "All fields are required");
@@ -37,9 +37,9 @@ const createTransaction = asyncHandler (async (req, res) => {
 
 const getTransactions = asyncHandler(async (req, res) => {
     const userId = req.user._id;
-    const transactions = await Transaction.findById(userId);
+    const transactions = await Transaction.find({ userId });
 
-    res.status(200).json(new ApiResponse(200, "Transactions fetched successfully", transactions));
+    res.status(200).json(new ApiResponse(200, transactions,"Transactions fetched successfully",));
 });
 
 

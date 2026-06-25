@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Search, Calendar, DollarSign, FileText, CreditCard } from 'lucide-react';
 import { Link } from "react-router-dom";
+import { createTransaction } from "../../api/transactions.api.js";
+import { getTransactions } from "../../api/transactions.api.js";
 
 function Expenses(){
 
@@ -8,18 +10,69 @@ function Expenses(){
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [sortBy, setSortBy] = useState('date');
+    const [expenseEntries, setExpenseEntries] = useState([]);
 
     const expenseCategories = ['Food', 'Rent', 'Electricity', 'Phone Bill', 'OTT Subscription', 'Travel', 'Fuel', 'Shopping', 'Healthcare', 'Other'];
     const paymentMethods = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Banking'];
     
-    const expenseEntries = [
-    { id: 1, amount: 800, date: '2026-05-12', category: 'Food', paymentMethod: 'UPI', remarks: 'Grocery shopping at supermarket' },
-    { id: 2, amount: 20000, date: '2026-05-01', category: 'Rent', paymentMethod: 'Net Banking', remarks: 'Monthly rent payment' },
-    { id: 3, amount: 420, date: '2026-05-08', category: 'Electricity', paymentMethod: 'UPI', remarks: 'Electricity bill for April' },
-    { id: 4, amount: 199, date: '2026-05-05', category: 'OTT Subscription', paymentMethod: 'Credit Card', remarks: 'Netflix monthly subscription' },
-    { id: 5, amount: 1200, date: '2026-05-10', category: 'Travel', paymentMethod: 'Debit Card', remarks: 'Train tickets to Mumbai' },
-    { id: 6, amount: 2500, date: '2026-05-07', category: 'Fuel', paymentMethod: 'Cash', remarks: 'Petrol for car' },
-    ];
+    // const expenseEntries = [
+    // { id: 1, amount: 800, date: '2026-05-12', category: 'Food', paymentMethod: 'UPI', remarks: 'Grocery shopping at supermarket' },
+    // { id: 2, amount: 20000, date: '2026-05-01', category: 'Rent', paymentMethod: 'Net Banking', remarks: 'Monthly rent payment' },
+    // { id: 3, amount: 420, date: '2026-05-08', category: 'Electricity', paymentMethod: 'UPI', remarks: 'Electricity bill for April' },
+    // { id: 4, amount: 199, date: '2026-05-05', category: 'OTT Subscription', paymentMethod: 'Credit Card', remarks: 'Netflix monthly subscription' },
+    // { id: 5, amount: 1200, date: '2026-05-10', category: 'Travel', paymentMethod: 'Debit Card', remarks: 'Train tickets to Mumbai' },
+    // { id: 6, amount: 2500, date: '2026-05-07', category: 'Fuel', paymentMethod: 'Cash', remarks: 'Petrol for car' },
+    // ];
+    useEffect(() => {
+        const fetchExpenseTransactions = async () => {
+            try {
+                const response = await getTransactions();
+                const transactionsArray = response?.data?.data || [];
+
+                const filteredExpenses = transactionsArray
+                    .filter((txn) => txn?.type === 'expense')
+                    .map((txn) => ({
+                        id: txn._id,
+                        amount: txn.amount,
+                        date: txn.transactionTime,
+                        category: txn.category,
+                        paymentMethod: txn.paymentMethod,
+                        remarks: txn.description
+                    }));
+
+                setExpenseEntries(filteredExpenses);
+            } catch (error) {
+                console.error("Error fetching transactions in Expenses page:", error);
+                setExpenseEntries([]);
+            }
+        };
+        fetchExpenseTransactions();
+    }, []);
+
+    const addExpenseEntry = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const newEntry = {
+            amount: Number(formData.get('amount')),
+            date: formData.get('date'),
+            category: formData.get('category'),
+            paymentMethod: formData.get('paymentMethod'),
+            remarks: formData.get('remarks'),
+        };
+
+        try {
+            const response = await createTransaction({
+                type: 'expense',
+                description: newEntry.remarks,
+                category: newEntry.category,
+                amount: newEntry.amount,
+                paymentMethod: newEntry.paymentMethod,
+                transactionTime: newEntry.date,
+            });
+        } catch (error) {
+            console.error("Error adding expense entry:", error);
+        }
+    };    
 
     const filteredEntries = expenseEntries
     .filter((entry) => {
@@ -104,7 +157,7 @@ function Expenses(){
                         >
                             <option value="all">All Categories</option>
                             {expenseCategories.map((cat) => (
-                            <option key={cat} value={cat}>
+                            <option style={{ backgroundColor: "#1b232d", color: "white" }} key={cat} value={cat}>
                                 {cat}
                             </option>
                             ))}
@@ -114,8 +167,8 @@ function Expenses(){
                             onChange={(e) => setSortBy(e.target.value)}
                             className="px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
                         >
-                            <option value="date">Sort by Date</option>
-                            <option value="amount">Sort by Amount</option>
+                            <option style={{ backgroundColor: "#1b232d", color: "white" }} value="date">Sort by Date</option>
+                            <option style={{ backgroundColor: "#1b232d", color: "white" }} value="amount">Sort by Amount</option>
                         </select>
 
                         <div className="flex content-center">
@@ -168,12 +221,13 @@ function Expenses(){
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
                 <div className="bg-[#141920] border border-[#ffffff14] rounded-xl p-6 w-full max-w-md">
                     <h2 className="text-xl font-bold text-[#e8ecf0] mb-4">Add Expense Entry</h2>
-                    <form className="space-y-4">
+                    <form onSubmit={addExpenseEntry} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Amount</label>
                         <div className="relative">
                         <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
                         <input
+                            name="amount"
                             type="number"
                             placeholder="Enter amount"
                             className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
@@ -187,6 +241,7 @@ function Expenses(){
                         <div className="relative">
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
                         <input
+                            name="date"
                             type="date"
                             className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]"
                             required
@@ -196,7 +251,7 @@ function Expenses(){
 
                     <div>
                         <label className="block text-sm font-medium text-[#8b92a0] mb-2">Category</label>
-                        <select className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
+                        <select name="category" className="w-full px-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
                         {expenseCategories.map((cat) => (
                             <option style={{ backgroundColor: "#1b232d" }} key={cat}>{cat}</option>
                         ))}
@@ -207,7 +262,7 @@ function Expenses(){
                         <label className="block text-sm font-medium text-[#e8ecf0] mb-2">Payment Method</label>
                         <div className="relative">
                         <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a0]" />
-                        <select className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
+                        <select name="paymentMethod" className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0]">
                             {paymentMethods.map((method) => (
                             <option style={{ backgroundColor: "#1b232d" }} key={method}>{method}</option>
                             ))}
@@ -221,6 +276,7 @@ function Expenses(){
                         <FileText className="absolute left-3 top-3 w-5 h-5 text-[#8b92a0]" />
                         <textarea
                             placeholder="Add notes about this expense..."
+                            name="remarks"
                             rows={3}
                             className="w-full pl-10 pr-4 py-2 bg-[#ffffff0d] border border-[#ffffff14] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00d4aa] text-[#e8ecf0] resize-none"
                         ></textarea>
