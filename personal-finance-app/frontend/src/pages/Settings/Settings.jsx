@@ -5,9 +5,10 @@ import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 import { useContext } from "react";
 import authContext from "../../context/authContext.js";
-import { deleteProfilePicture, logoutUser, updateProfilePicture, updateProfile, changePassword } from "../../api/auth.api.js";
+import { deleteProfilePicture, logoutUser, updateProfilePicture, updateProfile, changePassword, deleteAccount } from "../../api/auth.api.js";
 import { data, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 
 const DEFAULT_PFP =
     "https://res.cloudinary.com/dhdrljlsi/image/upload/v1782215305/WhatsApp_Image_2026-06-23_at_16.38.40_ta89wp.jpg"
@@ -121,6 +122,7 @@ function Settings(){
     const [newPassword, setNewPassword] = useState("")
     const [confirmNewPassword, setConfirmNewPassword] = useState("")
 
+    
     const changePass = async ()=>{
 
         if(newPassword!==confirmNewPassword){
@@ -139,6 +141,36 @@ function Settings(){
             setCurrentPassword("");
             setNewPassword("");
             setConfirmNewPassword("");
+        }
+        } catch (error) {
+            alert(error?.response?.data?.message|| "Something went wrong.");
+        }
+    }
+
+    //delete account
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [deletePassword, setDeletePassword] = useState("");
+    const [confirmDeletePassword, setConfirmDeletePassword] = useState("");
+
+    const dltAccount = async()=>{
+        if(deletePassword!==confirmDeletePassword){
+            return alert("Password did not match")
+        }
+
+        try {
+        const res = await deleteAccount({
+            deletePassword,
+            confirmDeletePassword
+        })
+        if (res.data.success) {
+            alert("account deleted succesfully")
+
+            setDeletePassword("");
+            setConfirmDeletePassword("");
+            setShowDeleteModal(false);
+            
+            setUser(null)
+            navigate("/login")
         }
         } catch (error) {
             alert(error?.response?.data?.message|| "Something went wrong.");
@@ -446,12 +478,83 @@ function Settings(){
                                 <p className="font-semi-bold text-0.5xl">Delete Account</p>
                                 <p className="text-xs  text-muted-foreground">Permanently delete your account and all associated data</p>
                             </div>
-                            <button className="cursor-pointer"><Trash2 size={20} className="text-[#e41515d5]"/></button>
+                            <button onClick={()=>{setShowDeleteModal(true)}} className="cursor-pointer"><Trash2 size={20} className="text-[#e41515d5]"/></button>
                         </div>
                 </div>
                 
             </div>
+            {/* delete account popup */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                    <div className="rounded-2xl bg-[#141920] border border-red-500/30 p-6 shadow-2xl">
+                        <h2 className="text-2xl font-semibold text-red-500">
+                            Delete Account
+                        </h2>
+
+                        <p className="mt-3 text-gray-300 text-sm leading-6">
+                            Are you sure you want to permanently delete your account?
+                            <br />
+                            <span className="text-red-400 font-medium">
+                                This action cannot be undone.
+                            </span>
+                        </p>
+
+                        <ul className="mt-4 text-sm text-gray-400 space-y-2 list-disc list-inside">
+                            <li>Your profile will be deleted.</li>
+                            <li>All transactions will be deleted.</li>
+                            <li>All income and expense records will be deleted.</li>
+                            <li>All loan records will be deleted.</li>
+                            <li>Your analytics history will be permanently removed.</li>
+                        </ul>
+
+                        <div className="mt-6 flex flex-col gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm">Current Password</label>
+                                <input
+                                    value={deletePassword}
+                                    onChange={(e)=>setDeletePassword(e.target.value)}
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    className="px-4 py-2 rounded-lg bg-[#ffffff0d] border border-white/10 focus:ring-2 focus:ring-red-500 outline-none"
+                                />
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm">Confirm Password</label>
+                                <input
+                                    value={confirmDeletePassword}
+                                    onChange={(e)=>setConfirmDeletePassword(e.target.value)}
+                                    type="password"
+                                    placeholder="Re-enter your password"
+                                    className="px-4 py-2 rounded-lg bg-[#ffffff0d] border border-white/10 focus:ring-2 focus:ring-red-500 outline-none"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-end gap-4">
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                className="px-5 py-2 rounded-lg bg-[#ffffff12] hover:bg-[#ffffff20] transition"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={dltAccount}
+                                className="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition text-white font-medium"
+                            >
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+)}
+       
+       
+
         </div>
+
+        
     )
 }
 

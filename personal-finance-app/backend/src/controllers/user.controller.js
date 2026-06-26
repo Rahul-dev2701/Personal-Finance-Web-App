@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {v2 as cloudinary} from "cloudinary"
 import jwt from "jsonwebtoken"
+import { Transaction } from "../models/transactions.models.js";
+import {Loan} from "../models/loans.models.js";
 
 
 const generateAccessAndRefreshTokens =  async (userId) =>{
@@ -348,6 +350,42 @@ const changePassword= asyncHandler(async (req, res) => {
     );
 });
 
+const deleteAccount= asyncHandler(async (req, res) => {
+    const { deletePassword, confirmDeletePassword } = req.body;
 
-export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile, changePassword}
+    const user = await User.findById(req.user._id).select("+password");
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if(!deletePassword||!confirmDeletePassword) throw new ApiError(400,"please enter password")
+
+    if (deletePassword !== confirmDeletePassword) {
+        throw new ApiError(400, "Passwords do not match");
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(deletePassword)
+    if(!isPasswordCorrect) throw new ApiError(401,"Invalid password")
+    
+    //delete transactions first
+    await Transaction.deleteMany({ owner: req.user._id });
+    await Loan.deleteMany({ owner: req.user._id });
+    
+    await user.deleteOne();
+
+    const options = {
+        httpOnly: true,
+        secure: true,
+    };
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "Account deleted successfully"));
+});
+
+
+export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile, changePassword, deleteAccount}
 

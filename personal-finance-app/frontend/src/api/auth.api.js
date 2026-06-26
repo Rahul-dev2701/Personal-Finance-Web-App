@@ -32,7 +32,10 @@ const changePassword = (data)=>{
     return api.post("/user/change-password",data)
 }
 
+const deleteAccount = (data)=>{
+    return api.delete("/user/delete-account",{data})
+}
 
-export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken, updateProfile, changePassword}
+export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken, updateProfile, changePassword, deleteAccount}
 
 
