@@ -369,8 +369,8 @@ const deleteAccount= asyncHandler(async (req, res) => {
     if(!isPasswordCorrect) throw new ApiError(401,"Invalid password")
     
     //delete transactions first
-    await Transaction.deleteMany({ owner: req.user._id });
-    await Loan.deleteMany({ owner: req.user._id });
+    await Transaction.deleteMany({ userId: req.user._id });
+    await Loan.deleteMany({ userId: req.user._id });
     
     await user.deleteOne();
 
