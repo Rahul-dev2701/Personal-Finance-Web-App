@@ -37,7 +37,7 @@ export default function Login() {
 
   return (
     <AuthLayout
-      title="FINEconix"
+      title="WealthTrack"
       subtitle="Welcome back. Sign in to manage your finances."
       cardTitle="Login"
     >

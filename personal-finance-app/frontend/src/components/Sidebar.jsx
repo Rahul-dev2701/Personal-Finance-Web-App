@@ -59,7 +59,7 @@ const Sidebar = () => {
       <div>
         <div className="px-6 py-6 border-b border-white/10">
           <h1 className="text-[#01D5AB] text-[20px] font-bold tracking-wide">
-            Finance App
+            WealthTrack
           </h1>
         </div>
 

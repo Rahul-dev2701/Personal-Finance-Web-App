@@ -55,7 +55,7 @@ const [profilePicture,setProfilePicture] = useState()
 
   return (
     <AuthLayout
-      title="FINEconix"
+      title="WealthTrack"
       subtitle="Create your account and start tracking your finances."
       cardTitle="Sign Up"
     >

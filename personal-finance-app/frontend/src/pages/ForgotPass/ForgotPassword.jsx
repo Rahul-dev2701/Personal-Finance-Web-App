@@ -7,7 +7,7 @@ import AuthLayout from "../../components/authLayout.jsx";
 export default function ForgotPassword() {
   return (
     <AuthLayout
-      title="FINEconix"
+      title="WealthTrack"
       subtitle="Enter your email address and we'll send you a password reset link."
       cardTitle="Forgot Password"
     >
