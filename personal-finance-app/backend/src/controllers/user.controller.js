@@ -318,5 +318,36 @@ const updateProfile= asyncHandler(async (req, res) => {
     );
 });
 
-export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile}
+const changePassword= asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+    const user = await User.findById(req.user._id).select("+password");
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    if(!currentPassword) throw new ApiError(400,"please enter current password")
+    if(!newPassword) throw new ApiError(400,"new password field empty")
+    if(!confirmNewPassword) throw new ApiError(400,"confirm new password field empty")
+    if (newPassword !== confirmNewPassword) {
+        throw new ApiError(400, "Passwords do not match");
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(currentPassword)
+    if(!isPasswordCorrect) throw new ApiError(401,"Invalid password")
+        
+    user.password = newPassword;
+    await user.save();
+
+    const updatedUser = await User.findById(req.user._id)
+    .select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedUser, "Password changed successfully")
+    );
+});
+
+
+export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile, changePassword}
 

@@ -28,7 +28,11 @@ const updateProfile = (data)=>{
     return api.post("/user/update-profile",data)
 }
 
+const changePassword = (data)=>{
+    return api.post("/user/change-password",data)
+}
 
-export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken, updateProfile}
+
+export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken, updateProfile, changePassword}
 
 

@@ -5,7 +5,7 @@ import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 import { useContext } from "react";
 import authContext from "../../context/authContext.js";
-import { deleteProfilePicture, logoutUser, updateProfilePicture, updateProfile } from "../../api/auth.api.js";
+import { deleteProfilePicture, logoutUser, updateProfilePicture, updateProfile, changePassword } from "../../api/auth.api.js";
 import { data, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -110,6 +110,35 @@ function Settings(){
         if (res.data.success) {
             setUser(res.data.data)
             setIsEditing(false)
+        }
+        } catch (error) {
+            alert(error?.response?.data?.message|| "Something went wrong.");
+        }
+    }
+
+    //update password
+    const [currentPassword, setCurrentPassword] = useState("")
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmNewPassword, setConfirmNewPassword] = useState("")
+
+    const changePass = async ()=>{
+
+        if(newPassword!==confirmNewPassword){
+            return alert("New password and confirm new password fields should match")
+        }
+
+        try {
+        const res = await changePassword({
+            currentPassword,
+            newPassword,
+            confirmNewPassword
+        })
+        if (res.data.success) {
+            alert("password changed succesfully")
+            setUser(res.data.data)
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmNewPassword("");
         }
         } catch (error) {
             alert(error?.response?.data?.message|| "Something went wrong.");
@@ -292,18 +321,31 @@ function Settings(){
                 <div className="flex flex-col gap-4 mt-4">
                     <div className="flex flex-col gap-2">
                         <label htmlFor="name">Current Password</label>
-                        <input id="currPass" type="password" placeholder="Enter current password" className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input
+                            value={currentPassword}
+                            onChange={(e)=>{setCurrentPassword(e.target.value)}} 
+                            id="currPass" type="password" placeholder="Enter current password" className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="email">New Password</label>
-                        <input id="newPass" type="password" placeholder="Enter new password"  className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input 
+                            value={newPassword}
+                            onChange={(e)=>{setNewPassword(e.target.value)}} 
+                            id="newPass" type="password" placeholder="Enter new password"  className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="phone">Confirm New Password</label>
-                        <input id="confirm" placeholder="Confirm new password" type="password" className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input 
+                        value={confirmNewPassword}
+                            onChange={(e)=>{setConfirmNewPassword(e.target.value)}} 
+                            id="confirm" placeholder="Confirm new password" type="password" className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                        />
                     </div>
                     <div>
                         <button
+                        onClick={changePass}
                             className="bg-[#00d4aa] text-[#0a0e14] px-4 py-2 rounded-lg font-medium hover:bg-[#00d4aa]/90 transition-colors flex items-center gap-2">
                             Change Password
                         </button>
