@@ -219,8 +219,8 @@ const dltProfilePhoto = asyncHandler(async(req,res)=>{
 })
 
 const refreshAccessToken = asyncHandler(async(req,res)=>{
-    const receivedToken = req.cookies?.refreshToken || req.body.refreshToken //replace the bearer keyword with emty string to get auth token if access to cookies not available
-    
+    const receivedToken = req.cookies?.refreshToken || req.body?.refreshToken //replace the bearer keyword with emty string to get auth token if access to cookies not available
+
     if(!receivedToken) throw new ApiError(401,"unauthorized request")
 
     const decodedToken = await jwt.verify(receivedToken, process.env.REFRESH_TOKEN_SECRET)
