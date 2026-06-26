@@ -1,68 +1,194 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import {Topcard,Transaction} from "../../components/ovw_card";
-import { CreditCard,ArrowUp, ArrowDown }  from "lucide-react";
+import { CreditCard,ArrowUp, ArrowDown, Loader2 }  from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import BarGraph from "../../components/barGraph";
 import { Link } from "react-router-dom";
-
-
-const TotalBalance = 5000.00
-const MonthlyIncome = 5000.00
-const MonthlyExpense = 5000.00
-const year = new Date().getFullYear()
-const incomeChange = 12.00
-const expenseChange = -12.00
-const balanceChange = 12.00
-
-const month = new Date().toLocaleString("default", {
-  month: "long",
-});
-const balanceFooter = {
-  icon: balanceChange > 0 ? ArrowUp : ArrowDown,
-  value: Math.abs(balanceChange),
-  color: balanceChange > 0 ? "text-green-400" : "text-red-400",
-};
-const incomeFooter = {
-  icon: incomeChange > 0 ? ArrowUp : ArrowDown,
-  value: Math.abs(incomeChange),
-  color: incomeChange > 0 ? "text-green-400" : "text-red-400",
-};
-
-const expenseFooter = {
-    icon:   expenseChange > 0 ? ArrowDown : ArrowUp,
-    value: Math.abs(expenseChange),
-    color:  expenseChange > 0 ? "text-green-400" : "text-red-400",
-};
-
-const weeklyData = [
-    { day: 'Mon', income: 4200, expenses: 3100 },
-    { day: 'Tue', income: 3800, expenses: 2800 },
-    { day: 'Wed', income: 5100, expenses: 4200 },
-    { day: 'Thu', income: 4500, expenses: 3600 },
-    { day: 'Fri', income: 6200, expenses: 4800 },
-    { day: 'Sat', income: 3200, expenses: 2400 },
-    { day: 'Sun', income: 2800, expenses: 1900 },
-  ];
-
-const recentTransactions = [
-    { id: 1, name: 'Grocery Shopping', category: 'Food', amount: -850, date: '12 May', type: 'expense' },
-    { id: 2, name: 'Salary Deposit', category: 'Income', amount: 25000, date: '10 May', type: 'income' },
-    { id: 3, name: 'Electricity Bill', category: 'Electricity', amount: -420, date: '08 May', type: 'expense' },
-    { id: 4, name: 'Netflix Subscription', category: 'OTT', amount: -199, date: '05 May', type: 'expense' },
-    { id: 5, name: 'Freelance Project', category: 'Income', amount: 8500, date: '03 May', type: 'income' },
-  ];
-
-const expenseBreakdown = [
-    { category: 'Food', amount: 12450, percentage: 28, color: '#00d4aa' },
-    { category: 'Rent', amount: 20000, percentage: 45, color: '#3b82f6' },
-    { category: 'Travel', amount: 5200, percentage: 12, color: '#8b5cf6' },
-    { category: 'Bills', amount: 4850, percentage: 11, color: '#f59e0b' },
-    { category: 'Others', amount: 1800, percentage: 4, color: '#ec4899' },
-  ];
+import { getTransactions } from "../../api/transactions.api";
+import api from "../../api/axios.js";
 
 function Overview(){
     const [user,setUser] = useState("Default");
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchUser = async () => {
+        try {
+            const res = await api.get("/user/current-user");
+            console.log("User data fetched:", res.data);
+            if (res && res.data && res.data.data) {
+                setUser(res.data.data.fullName);
+            }
+        } catch (error) {
+            console.error("Error fetching user data", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        const fetchOvwData = async () => {
+            try {
+                const res = await getTransactions()
+                let transactionsArr = []
+
+                if(res && res.data) {
+                    transactionsArr = Array.isArray(res.data)?res.data : (res.data.data || [])
+                } else if(Array.isArray(res)) {
+                    transactionsArr = res
+                }
+
+                setTransactions(transactionsArr)
+            } catch(error) {
+                console.error("Error fetching overview data", error)
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchOvwData()
+    }, [])
+
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    const prevMonthDate = new Date(currentYear, currentMonth - 1, 1);
+    const prevMonthYear = prevMonthDate.getFullYear();
+    const prevMonth = prevMonthDate.getMonth();
+
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    const monthlyTransactions = [];
+    const prevMonthlyTransactions = [];
+
+    transactions.forEach((t) => {
+        if (!t.transactionTime) return;
+        const tDate = new Date(t.transactionTime);
+        const tYear = tDate.getFullYear();
+        const tMonth = tDate.getMonth();
+
+        if (tYear === currentYear && tMonth === currentMonth) {
+            monthlyTransactions.push(t);
+        } else if (tYear === prevMonthYear && tMonth === prevMonth) {
+            prevMonthlyTransactions.push(t);
+        }
+    });
+
+    const totalIncome = monthlyTransactions
+        .filter((t) => t.type === "income")
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    const totalExpense = monthlyTransactions
+        .filter((t) => t.type === "expense")
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    const totalBalance = totalIncome - totalExpense;
+
+    const prevIncome = prevMonthlyTransactions
+        .filter((t) => t.type === "income")
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    const prevExpense = prevMonthlyTransactions
+        .filter((t) => t.type === "expense")
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    const prevBalance = prevIncome - prevExpense;
+
+    const calculatePercentageChange = (current, previous) => {
+        if (previous === 0) return current > 0 ? 100 : 0; // Avoid division by zero
+        return parseFloat((((current - previous) / Math.abs(previous)) * 100).toFixed(1));
+    };
+
+    const balanceChange = calculatePercentageChange(totalBalance, prevBalance);
+    const incomeChange = calculatePercentageChange(totalIncome, prevIncome);
+    const expenseChange = calculatePercentageChange(totalExpense, prevExpense);
+
+    const balanceFooter = {
+        icon: balanceChange >= 0 ? ArrowUp : ArrowDown,
+        value: Math.abs(balanceChange),
+        color: balanceChange >= 0 ? "text-green-400" : "text-red-400",
+    };
+    const incomeFooter = {
+        icon: incomeChange >= 0 ? ArrowUp : ArrowDown,
+        value: Math.abs(incomeChange),
+        color: incomeChange >= 0 ? "text-green-400" : "text-red-400",
+    };
+    const expenseFooter = {
+        icon: expenseChange <= 0 ? ArrowDown : ArrowUp,
+        value: Math.abs(expenseChange),
+        color: expenseChange <= 0 ? "text-green-400" : "text-red-400",
+    };
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const baseWeeklyData = dayNames.map((day) => ({ day, income: 0, expenses: 0 }));
+
+    transactions.forEach((t) => {
+        if (t.transactionTime) {
+            const tDate = new Date(t.transactionTime);
+            if (tDate >= startOfWeek && tDate <= endOfWeek) {
+                const dayIndex = tDate.getDay();
+                const dayName = dayNames[dayIndex];
+                const match = baseWeeklyData.find((d) => d.day === dayName);
+                if (match) {
+                    if (t.type === "income") match.income += t.amount;
+                    if (t.type === "expense") match.expenses += t.amount;
+                }
+            }
+        }
+    });
+
+    const recentTransactionsMapped = [...monthlyTransactions]
+        .sort((a, b) => new Date(b.transactionTime || 0) - new Date(a.transactionTime || 0))
+        .slice(0, 5)
+        .map((t) => ({
+            id: t._id,
+            name: t.description,
+            category: t.category,
+            amount: t.type === "expense" ? -Math.abs(t.amount) : t.amount,
+            date: new Date(t.transactionTime).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }),
+            type: t.type,
+        }));
+
+    const colors = ["#00d4aa", "#3b82f6", "#8b5cf6", "#f59e0b", "#ec4899", "#10b981", "#64748b"];
+    const categoryTotals = {};
+
+    monthlyTransactions
+        .filter((t) => t.type === "expense")
+        .forEach((t) => {
+            categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+        });
+
+    const expenseBreakdown = Object.keys(categoryTotals).map((category, idx) => {
+        const amount = categoryTotals[category];
+        const percentage = totalExpense > 0 ? Math.round((amount / totalExpense) * 100) : 0;
+        return {
+            category,
+            amount,
+            percentage,
+            color: colors[idx % colors.length],
+        };
+    });
+
+    const monthName = now.toLocaleString("default", { month: "long" });
+
+    if (loading) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center bg-[#0d1117]">
+                <Loader2 className="h-10 w-10 animate-spin text-[#00D9B5]" />
+            </div>
+        );
+    }
+
     return(
         <div className="relative p-8">
 
@@ -70,18 +196,18 @@ function Overview(){
             <div>
                 <div className="  absolute top-10 mb-4">
                     <p className="text-3xl font-bold text-white pb-2">Hello {user}</p>
-                    <p className="text-gray-400">Here's your financial overview for {month} {year}</p>
+                    <p className="text-gray-400">Here's your financial overview for {monthName} {currentYear}</p>
                 </div>
                 <div className="grid grid-cols-3 gap-6 mt-30">
-                    <Topcard title="Total Balance" value={TotalBalance}
+                    <Topcard title="Total Balance" value={totalBalance}
                         icon={CreditCard} iconBg="bg-emerald-500/10" iconCol="text-[#00D9B5]"
                         footer={balanceFooter}
                     />
-                    <Topcard title="Income" value={MonthlyIncome}
+                    <Topcard title="Income" value={totalIncome}
                     icon={ArrowUp} iconBg="bg-green-500/10" iconCol="text-[#13cf65]"
                     footer = {incomeFooter}
                     />
-                    <Topcard title="Expenses" value={MonthlyExpense}
+                    <Topcard title="Expenses" value={totalExpense}
                     icon={ArrowDown} iconBg="bg-red-500/10" iconCol="text-[#e61c15]"
                     footer = {expenseFooter}
                     />
@@ -108,8 +234,8 @@ function Overview(){
                         </div>
                     </div>
                     </div>
-                    <div className="h-80 w-full" mt-8>
-                    <BarGraph weeklyData={weeklyData} />
+                    <div className="h-80 w-full">
+                    <BarGraph weeklyData={baseWeeklyData} />
                     </div>
                 </div>
 
@@ -119,7 +245,7 @@ function Overview(){
                         <div className="text-lg font-semibold text-foreground mt-4">Recent Transactions</div>
                         <Link to="/transactions" className="text-sm text-[#00D9B5] hover:underline mt-4">View All</Link>
                     </div>
-                    <Transaction recentTransactions={recentTransactions}/>
+                    <Transaction recentTransactions={recentTransactionsMapped}/>
                     
                 </div>
             </div>

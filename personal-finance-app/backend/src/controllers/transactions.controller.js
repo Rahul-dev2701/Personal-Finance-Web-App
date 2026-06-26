@@ -7,7 +7,6 @@ import {User} from '../models/user.models.js';
 const createTransaction = asyncHandler (async (req, res) => {
     const { amount, type, category, transactionTime, description, paymentMethod } = req.body;
     const userId = req.user._id;
-
     if (!amount || !type || !category || !transactionTime || !description || !paymentMethod) {
         throw new ApiError(400, 'All fields are required');
     }
@@ -33,7 +32,7 @@ const createTransaction = asyncHandler (async (req, res) => {
         throw new ApiError(500, "Transaction creation failed");
     }
     
-    return res.status(201).json(new ApiResponse(201, "Transaction created successfully", newTransaction));
+    return res.status(201).json(new ApiResponse(201, newTransaction ,"Transaction created successfully"));
 })
 
 const getTransactions = asyncHandler(async (req, res) => {

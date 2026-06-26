@@ -76,6 +76,7 @@ function Income() {
                 category: newEntry.source,
                 amount: newEntry.amount,
                 transactionTime: newEntry.date,
+                paymentMethod: 'Net Banking',
             });
 
             setIncomeEntries((prev) => [
