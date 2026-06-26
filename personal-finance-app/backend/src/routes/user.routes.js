@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken} from "../controllers/user.controller.js";
+import { registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile} from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
@@ -19,5 +19,7 @@ userRouter.route("/updatepfp").post(verifyJWT, upload.single("profilePicture"), 
 userRouter.route("/dltpfp").post(verifyJWT, dltProfilePhoto)
 
 userRouter.route("/get-new-token").post(refreshAccessToken)
+
+userRouter.route("/update-profile").post(verifyJWT, updateProfile)
 
 export {userRouter}

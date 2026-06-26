@@ -253,5 +253,70 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
     
 })
 
-export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken}
+const updateProfile= asyncHandler(async (req, res) => {
+    const { username, fullName, email, mobile } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    const updateFields = {};
+
+    // Username changed?
+    if (username && username !== user.username) {
+        const existingUser = await User.findOne({ username, _id: { $ne: req.user._id } });
+
+        if (existingUser) {
+            throw new ApiError(409, "Username already exists");
+        }
+
+        updateFields.username = username;
+    }
+
+    // Email changed?
+    if (email && email !== user.email) {
+        const existingUser = await User.findOne({ email, _id: { $ne: req.user._id } });
+
+        if (existingUser) {
+            throw new ApiError(409, "Email already exists");
+        }
+
+        updateFields.email = email;
+    }
+
+    // Mobile changed?
+    if (mobile && mobile !== user.mobile) {
+        const existingUser = await User.findOne({ mobile,_id: { $ne: req.user._id }  });
+
+        if (existingUser) {
+            throw new ApiError(409, "Mobile number already exists");
+        }
+
+        updateFields.mobile = mobile;
+    }
+
+    // Full name doesn't need uniqueness
+    if (fullName && fullName !== user.fullName) {
+        updateFields.fullName = fullName;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: updateFields,
+        },
+        {
+            new: true,
+            runValidators: true,
+        }
+    ).select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedUser, "Profile updated successfully")
+    );
+});
+
+export {registerUser, loginUser, logoutUser, getCurrentUser, changeProfilePhoto, dltProfilePhoto, refreshAccessToken, updateProfile}
 

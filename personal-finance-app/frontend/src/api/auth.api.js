@@ -24,8 +24,11 @@ const refAccessToken = () =>{
     return api.post("/user/get-new-token")
 }
 
+const updateProfile = (data)=>{
+    return api.post("/user/update-profile",data)
+}
 
 
-export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken}
+export {registerUser, loginUser, logoutUser, updateProfilePicture, deleteProfilePicture, refAccessToken, updateProfile}
 
 

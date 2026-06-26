@@ -5,8 +5,8 @@ import {User, Lock, Bell, Download, LogOut, Trash2, Camera} from "lucide-react"
 import SlidingKnob from "../../components/settings_card";
 import { useContext } from "react";
 import authContext from "../../context/authContext.js";
-import { deleteProfilePicture, logoutUser, updateProfilePicture } from "../../api/auth.api.js";
-import { useNavigate } from "react-router-dom";
+import { deleteProfilePicture, logoutUser, updateProfilePicture, updateProfile } from "../../api/auth.api.js";
+import { data, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const DEFAULT_PFP =
@@ -14,18 +14,28 @@ const DEFAULT_PFP =
 
 function Settings(){
 
+    //for display profile
     const { user, loading, setUser } = useContext(authContext);
     if(loading){
         return <div>Loading...</div>
     }
-    const userName = user.username || "User Name"
-    const userMail = user.email || "useremail@example.com"
-    const userMobile = user.mobile || "8005556677"
+    const [formData, setFormData] = useState({
+        username: "",
+        fullName: "",
+        email: "",
+        mobile: "",
+    });
+    
+
+    //for profile photo
     const [profilePhoto, setProfilePhoto] = useState(user.profilePicture || null)
 
     const [isUploading, setIsUploading] = useState(false);
+    
+    //for profile update
+    const [isEditing, setIsEditing] = useState(false);
 
-
+    //prifle pic update
     const handlePhotoChange = async (e) => {
         const file = e.target.files[0];
         if (!file) {
@@ -48,6 +58,8 @@ function Settings(){
             setIsUploading(false);
        }
 };
+
+    // dlt profile pic
     const dltProfilePic = async () => {
         setIsUploading(true)
        try {
@@ -63,6 +75,7 @@ function Settings(){
        }
 };
 
+    // logout
     const navigate = useNavigate();
 
     const logout = async ()=>{
@@ -75,6 +88,31 @@ function Settings(){
         }
         } catch (error) {
             console.log(error?.message)
+        }
+    }
+
+    //update profile
+    //set profile values whenever user changes
+    useEffect(() => {
+    if (user) {
+        setFormData({
+            username: user.username || "",
+            fullName: user.fullName || "",
+            email: user.email || "",
+            mobile: user.mobile || "",
+        });
+        }
+    }, [user]);
+
+    const updtProfile = async ()=>{
+        try {
+        const res = await updateProfile(formData)
+        if (res.data.success) {
+            setUser(res.data.data)
+            setIsEditing(false)
+        }
+        } catch (error) {
+            alert(error?.response?.data?.message|| "Something went wrong.");
         }
     }
 
@@ -159,22 +197,82 @@ function Settings(){
 
                 <div className="flex flex-col gap-4 mt-4">
                     <div className="flex flex-col gap-2">
+                        <label htmlFor="name">Username</label>
+                        <input 
+                            disabled={!isEditing} 
+                            onChange={(e)=>{
+                                setFormData({
+                                    ...formData,
+                                    username: e.target.value,
+                                })
+                            }} 
+                            id="username" type="text" value={formData.username} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
                         <label htmlFor="name">Full Name</label>
-                        <input id="name" type="text" defaultValue={userName} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input 
+                            disabled={!isEditing}
+                            onChange={(e)=>{
+                                setFormData({
+                                    ...formData,
+                                    fullName: e.target.value,
+                                })
+                            }}
+                            id="fullName" type="text" value={formData.fullName} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10"
+                         />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="email">Email</label>
-                        <input id="email" type="email" defaultValue={userMail} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input 
+                            disabled={!isEditing}
+                            onChange={(e)=>{
+                                setFormData({
+                                    ...formData,
+                                    email: e.target.value,
+                                })
+                            }}  
+                            id="email" type="email" value={formData.email} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                    />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="phone">Phone Number</label>
-                        <input id="phone" type="text" defaultValue={userMobile} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" />
+                        <input 
+                            disabled={!isEditing} 
+                            onChange={(e)=>{
+                                setFormData({
+                                    ...formData,
+                                    mobile: e.target.value,
+                                })
+                            }}
+                            id="phone" type="text" value={formData.mobile} className=" px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#00d4aa] bg-[#ffffff0d]  border border-white/10" 
+                        />
                     </div>
-                    <div>
-                        <button
-                            className="bg-[#00d4aa] text-[#0a0e14] px-4 py-2 rounded-lg font-medium hover:bg-[#00d4aa]/90 transition-colors flex items-center gap-2">
-                            Save Changes
-                        </button>
+                    <div className="flex gap-4">
+                        {!isEditing ? (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="bg-[#00d4aa] text-[#0a0e14] px-4 py-2 rounded-lg font-medium"
+                            >
+                                Update Profile
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={updtProfile}
+                                    className="bg-[#00d4aa] text-[#0a0e14] px-4 py-2 rounded-lg font-medium"
+                                >
+                                    Save Changes
+                                </button>
+
+                                <button
+                                    onClick={() => setIsEditing(false)}
+                                    className="bg-gray-600 text-white px-4 py-2 rounded-lg font-medium"
+                                >
+                                    Cancel
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
                 
