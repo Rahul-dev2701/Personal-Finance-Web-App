@@ -1,4 +1,9 @@
 # Personal Finance Web Application
+## Note
+This repository is forked from the original group project.
+
+Original repo: [Personal-Finance-Web-App](https://github.com/Manasvi68/Personal-Finance-Web-App))
+---
 
 A production-ready, full-stack MERN enterprise architecture engineered for real-time liquidity tracking, multi-category budgeting, and automated liability amortization schedules. The system leverages MongoDB Atlas paired with a strictly validated Mongoose Object-Document Mapping (ODM) layer to handle concurrent financial mutations while preserving absolute data state integrity across multi-tiered user dashboards.
 
